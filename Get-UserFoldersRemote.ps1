@@ -27,7 +27,7 @@ foreach ($Computer in $RemoteComputers) {
         foreach ($Folder in $UserFolders) {
             $OutputData += [PSCustomObject]@{
                 'Hostname'   = $Computer
-                'UserFolder' = $Folder.Name
+                'UserFolder' = "CS\$($Folder.Name);"
             }
         }
     } else {
