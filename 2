@@ -1,0 +1,31 @@
+# Read the list of remote computer names from the file
+$computerList = Get-Content -Path "computer_list.txt"
+
+# Define an empty array to store the results
+$results = @()
+
+# Iterate through the list of remote computers
+foreach ($computer in $computerList) {
+    try {
+        # Get user profile folders from the remote computer
+        $userFolders = Invoke-Command -ComputerName $computer -ScriptBlock { Get-ChildItem -Path "C:\Users" -Directory }
+
+        # Iterate through the user profile folders found
+        foreach ($userFolder in $userFolders) {
+            # Create a new object to store the computer name and user profile name
+            $result = New-Object -TypeName PSObject -Property @{
+                "Computer"     = $computer
+                "User Profile" = $userFolder.Name
+            }
+
+            # Add the result to the results array
+            $results += $result
+        }
+    }
+    catch {
+        Write-Host "Error accessing $computer: $_" -ForegroundColor Red
+    }
+}
+
+# Export the results array to a CSV file
+$results | Export-Csv -Path "user_profiles.csv" -NoTypeInformation
