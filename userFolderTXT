@@ -1,0 +1,29 @@
+# GetRemoteUserFolders.ps1
+
+# Define the UNC path to the remote computer's user folder location
+$remoteUserFolderPath = "\\RemoteComputerName\C$\Users"
+
+# Get the folder names in the remote user folder path
+try {
+    $userFolders = Get-ChildItem -Path $remoteUserFolderPath -Directory
+} catch {
+    Write-Host "Error accessing remote computer: $_"
+    exit
+}
+
+# Initialize an empty array to store user folder names
+$userFolderNames = @()
+
+# Add the user folder names to the array
+foreach ($folder in $userFolders) {
+    $userFolderNames += $folder.Name
+}
+
+# Define the file path where you want to save the text file
+$outputFilePath = "C:\example\user_folders.txt"
+
+# Write the user folder names array to the text file
+Set-Content -Path $outputFilePath -Value ($userFolderNames -join "`r`n")
+
+# Output a message indicating the file has been written
+Write-Host "User folder names have been written to the file '$outputFilePath'"
